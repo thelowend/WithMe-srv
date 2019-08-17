@@ -7,8 +7,7 @@ const token = process.env.TOKEN || 'token';
 let received_updates = [];
 
 router.route('/')
-  .get((req, rest) => {
-    console.log(args);
+  .get((req, res) => {
     res.send('<pre>' + JSON.stringify(received_updates, null, 2) + '</pre>');
   })
 
