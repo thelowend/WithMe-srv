@@ -1,0 +1,39 @@
+{
+  "field": "status",
+  "id": "44444444_444444444",
+  "value": "This is an Example Status."
+}
+
+Results in:
+[
+  {
+    "object": "user",
+    "entry": [
+      {
+        "id": "0",
+        "uid": "0",
+        "time": 1566076993,
+        "changes": [
+          {
+            "field": "status",
+            "id": "44444444_444444444",
+            "value": "When I cry no one cares, yet when the person next to me sheds one tear everyone trys to help"
+          }
+        ]
+      }
+    ]
+  }
+]
+
+
+
+Pedir token:
+curl -i -X GET \
+ "https://graph.facebook.com/oauth/access_token
+   ?grant_type=fb_exchange_token
+   &client_id={your-app-id}
+   &client_secret={your-app-secret}
+   &fb_exchange_token={your-short-lived-access-token}
+   &access_token={your-short-lived-access-token}"
+
+Pedir id usuario:

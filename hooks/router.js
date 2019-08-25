@@ -1,3 +1,4 @@
+const controller = require('./controller')
 const Router = require('express').Router
 const router = new Router()
 
@@ -27,12 +28,18 @@ router.route('/fb')
       return;
     }
     console.log('request header X-Hub-Signature validated');
-    // Process the Facebook updates here
     received_updates.unshift(req.body);
     res.sendStatus(200);
   })
+  .put((...args) => controller.PutFromFB(...args))
 
-router.route('/instagram')
+router.route('/tw')
+  .get((req, res) => {
+  })
+  .post((req, res) => {
+  })
+
+router.route('/ig')
   .get((req, res) => {
   })
   .post((req, res) => {
