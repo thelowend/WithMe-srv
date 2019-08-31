@@ -21,9 +21,10 @@ class Score {
   }
   async processFeed(user) {
        
-    // const analysisResults = await NLU.analyzeText(user.feed[0].text); // Realiza el análisis de sentimientos de último post
+    const analysisResults = await NLU.analyzeText(user.feed[0].text); // Realiza el análisis de sentimientos de último post
 
     // Para ahorrar la call:
+    /*
     const analysisResults = {
       "usage": {
         "text_units": 1,
@@ -49,8 +50,11 @@ class Score {
         }
       }
     }
+    */
 
     // sólo guardar los negativos ?
+
+    console.log(JSON.stringify(analysisResults, null, 2));
 
     let pastWeekHistory = [];
     let aggregateScore = 0;
@@ -60,12 +64,9 @@ class Score {
       }
       // tomar diferencia de días y aplicar dayOfTheWeekImpact
       let diffDias = cDates.diff(this.today, item.datetime, 'days', false);
-      debugger;
       aggregateScore += this._daysApartImpact(diffDias) * 1;
       pastWeekHistory.push(item);
     }
-
-    debugger;
 
     // Como la variedad de items acumulados en los últimos 7 días varía, tengo que hacer que la funcion sigmoide se "ensanche" usando dicho número, aunque cada vez menos.
 
@@ -79,7 +80,7 @@ class Score {
     }
     */
 
-    let result = Score.inverseSigmoid(analysisResults.sentiment.document.score);
+    let result = this._inverseSigmoid(analysisResults.sentiment.document.score);
 
     const historyModel = mongoose.model('history', historySchema);
     
@@ -103,7 +104,7 @@ class Score {
       console.log(history); // ultimos 5 resultados
       console.log(JSON.stringify(analysis, null, 2));
 
-      let result = Score.inverseSigmoid(analysisResults.sentiment.document.score);
+      let result = this._inverseSigmoid(analysisResults.sentiment.document.score);
     })
     */
     
@@ -143,7 +144,7 @@ class Score {
     */
 
   }
-  inverseSigmoid(x) {
+  _inverseSigmoid(x) {
     return (1 / (1 + Math.exp(x)));
   }
 }
