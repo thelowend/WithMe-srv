@@ -741,6 +741,10 @@ combined-stream@^1.0.6:
   dependencies:
     delayed-stream "~1.0.0"
 
+compare-dates@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/compare-dates/-/compare-dates-2.0.0.tgz#cee61385d3750439a7eed8deee5211c06bfc4d87"
+
 component-emitter@^1.2.1:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/component-emitter/-/component-emitter-1.3.0.tgz#16e4070fba8ae29b679f2215853ee181ab2eabc0"
