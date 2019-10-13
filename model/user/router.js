@@ -7,7 +7,8 @@ router.route('/')
   .post((...args) => controller.create(...args))
 
 router.route('/:id')
-  .put((...args) => controller.update(...args))
+  .put((...args) => controller.updateOne(...args))
+  .patch((...args) => controller.update(...args))
   .get((...args) => controller.findById(...args))
   .delete((...args) => controller.remove(...args))
 
