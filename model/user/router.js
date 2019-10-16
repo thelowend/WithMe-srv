@@ -12,7 +12,7 @@ router.route('/:id')
   .get((...args) => controller.findById(...args))
   .delete((...args) => controller.remove(...args))
 
-router.route('/:id/evaluation')
+router.route('/:id/evaluation/:category')
   .put((...args) => controller.updateEvaluation(...args))
 
 module.exports = router
