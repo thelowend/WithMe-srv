@@ -1,0 +1,38 @@
+{
+    "opening": "In the past SEVEN (7) DAYS...",
+    "scoring": {
+        "step": 1,
+        "values": [
+            { 
+                "key": "Never",
+                "value": 1
+            },
+            { 
+                "key": "Rarely",
+                "value": 2
+            },
+            { 
+                "key": "Sometimes",
+                "value": 3
+            },
+            { 
+                "key": "Often",
+                "value": 4
+            },
+            { 
+                "key": "Always",
+                "value": 5
+            }
+        ]
+    },
+    "items" : [
+        "I felt worthless.", 
+        "I felt that I had nothing to look forward to.", 
+        "I felt helpless.", 
+        "I felt sad.", 
+        "I felt like a failure.", 
+        "I felt depressed.", 
+        "I felt unhappy.", 
+        "I felt hopeless."
+    ]
+}

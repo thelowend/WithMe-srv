@@ -1,0 +1,44 @@
+{
+    "opening": "In the past SEVEN (7) DAYS...",
+    "scoring": {
+        "step": 1,
+        "values": [
+            { 
+                "key": "Never",
+                "value": 1
+            },
+            { 
+                "key": "Almost Never",
+                "value": 2
+            },
+            { 
+                "key": "Sometimes",
+                "value": 3
+            },
+            { 
+                "key": "Often",
+                "value": 4
+            },
+            { 
+                "key": "Almost Always",
+                "value": 5
+            }
+        ]
+    },
+    "items" : [
+        "I could not stop feeling sad.", 
+        "I felt alone.", 
+        "I felt everything in my life went wrong.", 
+        "I felt like I couldn’t do anything right.", 
+        "I felt lonely.",
+        "I felt sad.", 
+        "I felt unhappy.", 
+        "I thought that my life was bad.",
+        "Being sad made it hard for me to do things with my friends.",
+        "I didn’t care about anything.",
+        "I felt stressed.",
+        "I felt too sad to eat.",
+        "I wanted to be by myself.",
+        "It was hard for me to have fun."
+    ]
+}
