@@ -15,4 +15,7 @@ router.route('/:id')
 router.route('/:id/evaluation/:category')
   .put((...args) => controller.updateEvaluation(...args))
 
+router.route('/:id/social/:target')
+  .post((...args) => controller.postStatus(...args))
+
 module.exports = router

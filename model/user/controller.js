@@ -1,5 +1,6 @@
 const Controller = require('../../lib/controller')
 const userFacade = require('./facade')
+const hooksFacade = require('../../hooks/facade')
 const Evaluation = require('../../services/evaluation')
 
 class UserController extends Controller {
@@ -19,6 +20,12 @@ class UserController extends Controller {
         
 
       }
+    postStatus(req, res, next) {
+      //req.params.id, req.params.target, req.body.post
+      return hooksFacade.PutFromFB(req.body.post)
+        .then(doc => res.status(201).json(doc))
+        .catch(err => next(err))
+    }
 }
 
 module.exports = new UserController(userFacade)

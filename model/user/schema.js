@@ -18,16 +18,16 @@ const userSchema = new Schema({
     role: { type: String, required: true },
     contact_number: { type: String, required: true },
     threshold: { type: Number },
-    fb_id: { type: String },
-    fb_sync: Boolean,
-    tw_id: { type: String },
-    tw_sync: Boolean,
-    ig_id: { type: String },
-    ig_sync: Boolean,
     profile_complete: Boolean
   },
   feed: { type: [feedSchema], select: false },
   history: { type: [historySchema], select: false },
+  fb_id: { type: String },
+  fb_sync: Boolean,
+  tw_id: { type: String },
+  tw_sync: Boolean,
+  ig_id: { type: String },
+  ig_sync: Boolean,
 })
 
 module.exports = userSchema

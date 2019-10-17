@@ -27,7 +27,7 @@ class HookFacade extends Facade {
     return userModel.findOneAndUpdate(
       { fb_id: status.uid },
       { $push: { 'feed': { $each: [ Feed ], $position: 0 } } }, { new: true }, 
-    ).exec()
+    ).select(['user_metadata', 'feed', 'history']).exec()
     .then(user => new Promise(function(resolve, reject) {
       Score.processFeed(user); // Proceso asincrónico del servidor
       resolve(user);

@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const feedSchema = require('../model/feed/schema')
 const historySchema = require('../model/history/schema')
 const NLU = require('../services/nlu') // Servicio de NLU
+const Notification = require('../services/notification')
 
 const cDates = require('compare-dates')
 
@@ -21,10 +22,9 @@ class Score {
   }
   async processFeed(user) {
        
-    const analysisResults = await NLU.analyzeText(user.feed[0].text); // Realiza el análisis de sentimientos de último post
+    // const analysisResults = await NLU.analyzeText(user.feed[0].text); // Realiza el análisis de sentimientos de último post
 
     // Para ahorrar la call:
-    /*
     const analysisResults = {
       "usage": {
         "text_units": 1,
@@ -50,7 +50,6 @@ class Score {
         }
       }
     }
-    */
 
     // sólo guardar los negativos ?
 
@@ -81,8 +80,12 @@ class Score {
     */
 
     let result = this._inverseSigmoid(analysisResults.sentiment.document.score);
-
-    const historyModel = mongoose.model('history', historySchema);
+    if (result > user.user_metadata.threshold) {
+      Notification.send(pastWeekHistory, user.user_metadata);
+    }
+    
+    
+    // const historyModel = mongoose.model('history', historySchema);
     
     /*
     const historyResults = new Promise((resolve, reject) => {
