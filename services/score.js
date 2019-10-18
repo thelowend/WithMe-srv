@@ -18,10 +18,10 @@ class Score {
   _daysApartImpact(daysApart) {
     // Regresión logística de 4 parámetros (4PL -> 7 días: 0.2, 6 días: 0.2, 5 días: 0.4, 4 días: 0.6, 3 días: 0.8; 2 días: 1; 1 día: 1)
     // y = 0.1143415 + (1.004078 - 0.1143415)/(1 + (x/3.067045)^3.307601)
-    return Math.min(0.1143415 + (1.004078 - 0.1143415)/(1 + Math.pow((daysApart/3.067045), 3.307601)), 1);
+    return Math.min(0.1143415 + (1.004078 - 0.1143415) / (1 + Math.pow((daysApart / 3.067045), 3.307601)), 1);
   }
   async processFeed(user) {
-       
+
     // const analysisResults = await NLU.analyzeText(user.feed[0].text); // Realiza el análisis de sentimientos de último post
 
     // Para ahorrar la call:
@@ -72,7 +72,7 @@ class Score {
 
 
     let score = this.getScore(analysisResults); // calcular el puntaje del último post
-    
+
     /*
     for (let history of latestHistory) {
       score += history.score;
@@ -83,10 +83,10 @@ class Score {
     if (result > user.user_metadata.threshold) {
       Notification.send(pastWeekHistory, user.user_metadata);
     }
-    
-    
+
+
     // const historyModel = mongoose.model('history', historySchema);
-    
+
     /*
     const historyResults = new Promise((resolve, reject) => {
       historyModel.findOneAndUpdate(
@@ -110,13 +110,13 @@ class Score {
       let result = this._inverseSigmoid(analysisResults.sentiment.document.score);
     })
     */
-    
+
   }
   getScore(analysis) {
 
     return analysis.sentiment.document.score;
 
-        // TODO: No hace falta await, que lo procese el server paralelamente.
+    // TODO: No hace falta await, que lo procese el server paralelamente.
     // Sentiment score va de -1 a 1
     /*
     {

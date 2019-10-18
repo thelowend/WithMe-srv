@@ -18,4 +18,7 @@ router.route('/:id/evaluation/:category')
 router.route('/:id/social/:target')
   .post((...args) => controller.postStatus(...args))
 
+router.route('/:id/contact')
+  .get((...args) => controller.getContactInfo(...args))
+
 module.exports = router

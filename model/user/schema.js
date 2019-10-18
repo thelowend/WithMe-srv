@@ -18,7 +18,9 @@ const userSchema = new Schema({
     role: { type: String, required: true },
     contact_number: { type: String, required: true },
     threshold: { type: Number },
-    profile_complete: Boolean
+    profile_complete: Boolean,
+    medical_license: { type: String },
+    medical_institution: { type: String },
   },
   feed: { type: [feedSchema], select: false },
   history: { type: [historySchema], select: false },

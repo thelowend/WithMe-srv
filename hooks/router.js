@@ -34,10 +34,7 @@ router.route('/fb')
   .put((...args) => controller.PutFromFB(...args))
 
 router.route('/tw')
-  .get((req, res) => {
-  })
-  .post((req, res) => {
-  })
+.put((...args) => controller.PutFromTW(...args))
 
 router.route('/ig')
   .get((req, res) => {
