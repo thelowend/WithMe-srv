@@ -81,7 +81,7 @@ class Score {
 
     let result = this._inverseSigmoid(analysisResults.sentiment.document.score);
     if (result > user.user_metadata.threshold) {
-      Notification.send(pastWeekHistory, user.user_metadata);
+      Notification.send(pastWeekHistory, user);
     }
 
 

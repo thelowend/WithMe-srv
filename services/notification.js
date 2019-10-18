@@ -33,6 +33,10 @@ class Notification {
         req.write(JSON.stringify({ 
             app_id: `${config.notifications.appId}`,
             contents: {"en": "Someone needs help"},
+            data: {
+                "id": userData.id,
+                "text": "Test text string"
+            },
             included_segments: ["Helpers"] // ["All"], ["Users"], ["Active Users"], etc.
           }));
         req.end();
