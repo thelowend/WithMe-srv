@@ -12,7 +12,7 @@ router.route('/:category')
         testFile = 'EN_DSM5_Level2_Depression_Adult.json'
         break;
       case 'child':
-        testFile = 'EN_DSM5_Level2_Depression_Adult.json'
+        testFile = 'EN_DSM5_Level2_Depression_Child.json'
         break;
     }
     if(!testFile) {
