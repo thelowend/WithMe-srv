@@ -14,6 +14,8 @@ class HookFacade extends Facade {
     // FACEBOOK WEBHOOK TEST
     if (status.changes[0].id = '44444444_444444444') {
       status.uid = '5da29f784cb41b00068e21a9'; // test user
+      sText = 'Everything hurts and it is extremely sad. I do not want it anymore nor I desire it for anyone else.';
+      sDate = new Date();
     }
 
     const userModel = mongoose.model('user', userSchema);
