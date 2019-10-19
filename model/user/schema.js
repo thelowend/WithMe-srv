@@ -8,7 +8,7 @@ const userSchema = new Schema({
   client_id: { type: String, select: false },
   connection: { type: String, select: false },
   email: { type: String, required: true },
-  email_verified: { type: Boolean, select: false },
+  email_verified: { type: Boolean },
   password: { type: String, required: true, select: false },
   request_language: { type: String, select: false },
   user_metadata: {
