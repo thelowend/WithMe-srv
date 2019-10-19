@@ -8,8 +8,8 @@ const Score = require('../services/score') // Servicio de scoring (nuestro algor
 class HookFacade extends Facade {
   PutFromFB(body) {
     const status = body.entry[0]; // El estado de FB del usuario
-    const sDate = new Date(status.time * 1000); // Se multiplica por 1000 porque de fecha de FB viene dividido por 1000
-    const sText = status.changes[0].value.trim();
+    let sDate = new Date(status.time * 1000); // Se multiplica por 1000 porque de fecha de FB viene dividido por 1000
+    let sText = status.changes[0].value.trim();
 
     // FACEBOOK WEBHOOK TEST
     if (status.changes[0].id = '44444444_444444444') {
