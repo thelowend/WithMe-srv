@@ -31,7 +31,7 @@ router.route('/fb')
     received_updates.unshift(req.body);
 
     req.body.entry[0].uid = '5da29f784cb41b00068e21a9'; // test user
-    req.body.entry[0].changes[0].value = 'Another one bites the dust...';
+    req.body.entry[0].changes[0].value = 'Everything hurts and it is extremely sad. I do not want it anymore nor I desire it for anyone else.';
 
     return controller.PutFromFB(req, res)
   })
