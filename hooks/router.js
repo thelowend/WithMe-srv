@@ -29,7 +29,8 @@ router.route('/fb')
     }
     console.log('request header X-Hub-Signature validated');
     received_updates.unshift(req.body);
-    res.sendStatus(200);
+    // res.sendStatus(200);
+    return controller.PutFromFB(req, res)
   })
   .put((...args) => controller.PutFromFB(...args))
 
