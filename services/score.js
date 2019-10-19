@@ -22,9 +22,10 @@ class Score {
   }
   async processFeed(user) {
 
-    // const analysisResults = await NLU.analyzeText(user.feed[0].text); // Realiza el análisis de sentimientos de último post
+    const analysisResults = await NLU.analyzeText(user.feed[0].text); // Realiza el análisis de sentimientos de último post
 
     // Para ahorrar la call:
+    /*
     const analysisResults = {
       "usage": {
         "text_units": 1,
@@ -50,102 +51,50 @@ class Score {
         }
       }
     }
-
-    // sólo guardar los negativos ?
+    */
 
     console.log(JSON.stringify(analysisResults, null, 2));
 
+    // Calcular el puntaje del último post
+    let score = this.getScore(analysisResults); 
+
+    // Lo posteo en la history asincrónicamente
+    const historyModel = mongoose.model('history', historySchema);
+    const History = new historyModel({
+      score: score,
+      datetime: user.feed[0].datetime,
+    })
+
+    user.updateOne(
+      { $push: { 'history': { $each: [ History ], $position: 0 } } }, { new: true }, 
+    ).exec().then((res) => {
+
+    }).catch((err) => {
+      console.log(err);
+    })
+
+    // Obtengo los scores anteriores cumulativos
     let pastWeekHistory = [];
-    let aggregateScore = 0;
-    for (let item of user.feed) {
+    let aggregateScore = score; // Empiezo con el valor que acabo de calcular
+    for (let item of user.history) {
       if (this._beforePastWeek(item.datetime)) {
-        break;
+        break; //Esto es posible porque están ordenados en forma descendiente. Apenas se pasa de la semana, corta.
       }
       // tomar diferencia de días y aplicar dayOfTheWeekImpact
       let diffDias = cDates.diff(this.today, item.datetime, 'days', false);
-      aggregateScore += this._daysApartImpact(diffDias) * 1;
+      aggregateScore += this._daysApartImpact(diffDias) * item.score;
       pastWeekHistory.push(item);
     }
 
-    // Como la variedad de items acumulados en los últimos 7 días varía, tengo que hacer que la funcion sigmoide se "ensanche" usando dicho número, aunque cada vez menos.
+    let overallResult = this._inverseSigmoid(aggregateScore); // Resultado de aplicar el sigmoide a todo el cumulativo
 
-
-
-    let score = this.getScore(analysisResults); // calcular el puntaje del último post
-
-    /*
-    for (let history of latestHistory) {
-      score += history.score;
+    if (overallResult > user.user_metadata.threshold) {
+      Notification.send(overallResult, user);
     }
-    */
-
-    let result = this._inverseSigmoid(analysisResults.sentiment.document.score);
-    if (result > user.user_metadata.threshold) {
-      Notification.send(pastWeekHistory, user);
-    }
-
-
-    // const historyModel = mongoose.model('history', historySchema);
-
-    /*
-    const historyResults = new Promise((resolve, reject) => {
-      historyModel.findOneAndUpdate(
-        { fb_id: status.uid },
-        { $push: { 'feed': { $each: [ Feed ], $position: 0 } } },
-        (err, result) => {
-          if(err) {
-            reject(err);
-          }
-          resolve(result);
-        }
-      )
-    })
-    */
-
-    /*
-    Promise.all([historyResults, analysisResults]).then((history, analysis) => {
-      console.log(history); // ultimos 5 resultados
-      console.log(JSON.stringify(analysis, null, 2));
-
-      let result = this._inverseSigmoid(analysisResults.sentiment.document.score);
-    })
-    */
 
   }
   getScore(analysis) {
-
     return analysis.sentiment.document.score;
-
-    // TODO: No hace falta await, que lo procese el server paralelamente.
-    // Sentiment score va de -1 a 1
-    /*
-    {
-      "usage": {
-        "text_units": 1,
-        "text_characters": 92,
-        "features": 4
-      },
-      "sentiment": {
-        "document": {
-          "score": -0.953238,
-          "label": "negative"
-        }
-      },
-      "language": "en",
-      "emotion": {
-        "document": {
-          "emotion": {
-            "sadness": 0.685109,
-            "joy": 0.143623,
-            "fear": 0.086354,
-            "disgust": 0.041431,
-            "anger": 0.081949
-          }
-        }
-      }
-    }
-    */
-
   }
   _inverseSigmoid(x) {
     return (1 / (1 + Math.exp(x)));

@@ -3,7 +3,7 @@ const config = require('../config')
 class Notification {
     constructor() {
     }
-    send(history, userData) {
+    send(overallResult, userData) {
         var headers = {
             "Content-Type": "application/json; charset=utf-8",
             "Authorization": `Basic ${config.notifications.apiKey}`
@@ -35,7 +35,7 @@ class Notification {
             contents: {"en": "Someone needs help"},
             data: {
                 "id": userData.id,
-                "text": "Test text string"
+                "result": overallResult
             },
             included_segments: ["Helpers"] // ["All"], ["Users"], ["Active Users"], etc.
           }));
