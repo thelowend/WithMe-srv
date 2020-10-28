@@ -5,7 +5,60 @@ const userSchema = require('../model/user/schema')
 
 const Score = require('../services/score') // Servicio de scoring (nuestro algoritmo)
 
+const posts = require('../evaluation/samples/posts');
+const results = require('../evaluation/samples/results');
+
 class HookFacade extends Facade {
+  PutMultiple(id, num, sad) {
+    const userModel = mongoose.model('user', userSchema);
+    const feedModel = mongoose.model('feed', feedSchema);
+
+    const twoWeeksAgo = new Date();
+    twoWeeksAgo.setDate(new Date().getDate() - 30);
+
+    const sources = ['fb','tw','ig','tm'];
+    const feedCollection = [];
+    const analysisCollection = [];
+    const date = new Date();
+
+    // Generate posts from social media
+    let days = 0;
+    for (let i = 0; i < num; i++) {
+      date.setDate(twoWeeksAgo.getDate() + days);
+      const value = Math.floor(Math.random() * 100) + 1;
+      const baseEmotion = value <= sad ? 'sad' : 'happy';
+      const index = Math.floor(Math.random() * posts[baseEmotion].length);
+      const Feed = new feedModel({
+        source: sources[Math.floor(Math.random() * sources.length)],
+        datetime: date,
+        text: posts[baseEmotion][index],
+        hour: date.getHours(),
+        day: date.getDay(),
+        month: date.getMonth(),
+        year: date.getFullYear(),
+      });
+      feedCollection.push(Feed);
+      analysisCollection.push(results[baseEmotion][index]);
+      if (days === 13) {
+        days = 0;
+      } else {
+        days++;
+      }
+    }
+
+    return userModel.findOneAndUpdate(
+      { _id: id },
+      { feed : feedCollection }, { new: true }, 
+    ).select(['user_metadata', 'feed', 'history']).exec()
+    .then(user => new Promise(function(resolve, reject) {
+      //manejar el catch también
+      //Score.getTotalScore(analysisCollection); // Proceso asincrónico del servidor
+      Score.processAllFeed(user, analysisCollection);
+      resolve(user);
+    })).catch(err => {
+      console.log(err);
+    });
+  }
   PutFromFB(body) {
     const status = body.entry[0]; // El estado de FB del usuario
     let sDate = new Date(status.time * 1000); // Se multiplica por 1000 porque de fecha de FB viene dividido por 1000
@@ -29,9 +82,12 @@ class HookFacade extends Facade {
       { $push: { 'feed': { $each: [ Feed ], $position: 0 } } }, { new: true }, 
     ).select(['user_metadata', 'feed', 'history']).exec()
     .then(user => new Promise(function(resolve, reject) {
+      //manejar el catch también
       Score.processFeed(user); // Proceso asincrónico del servidor
       resolve(user);
-    }))
+    })).catch(err => {
+      console.log(err);
+    });
     
 
   }

@@ -3,98 +3,109 @@ const feedSchema = require('../model/feed/schema')
 const historySchema = require('../model/history/schema')
 const NLU = require('../services/nlu') // Servicio de NLU
 const Notification = require('../services/notification')
+const Logger = require('../services/logger')
 
 const cDates = require('compare-dates')
+const logger = new Logger();
 
 class Score {
   constructor() {
     this.today = new Date();
-    this.sevenDaysAgo = new Date();
-    this.sevenDaysAgo.setDate(this.today.getDate() - 30);
+    this.fortnightAgo = new Date();
+    this.fortnightAgo.setDate(this.today.getDate() - 30);
   }
-  _beforePastWeek(date) { // Compute the time 7 days ago to use in filtering the data
-    return cDates.isBefore(date, this.sevenDaysAgo);
+  _beforePastTwoWeeks(date) { // Compute the time 14 days ago to use in filtering the data
+    return cDates.isBefore(date, this.fortnightAgo);
   }
   _daysApartImpact(daysApart) {
+    // https://www.mycurvefit.com/
     // Regresión logística de 4 parámetros (4PL -> 7 días: 0.2, 6 días: 0.2, 5 días: 0.4, 4 días: 0.6, 3 días: 0.8; 2 días: 1; 1 día: 1)
     // y = 0.1143415 + (1.004078 - 0.1143415)/(1 + (x/3.067045)^3.307601)
+
+    /*
+      What is four/five-parameter parallel lines logistic regression?
+      Four parameter logistic model
+      The four parameter logistic model writes:
+
+      y = a + (d -a) / [1 + (x / c)b] model (1.1)
+
+      where a, b, c, d are the parameters of the model, and where x corresponds to the explanatory variable and y to the response variable. 
+      a and d are parameters that respectively represent the lower and upper asymptotes, and b is the slope parameter. 
+      c is the abscissa of the mid-height point which ordinate is (a+b)/2. 
+      When a is lower than d, the curve decreases from d to a, and when a is greater than d, the curve increases from a to d.
+    */
     return Math.min(0.1143415 + (1.004078 - 0.1143415) / (1 + Math.pow((daysApart / 3.067045), 3.307601)), 1);
   }
-  async processFeed(user) {
+  async processAllFeed(user, analysisCollection) {
+    const historyCollection = [];
+    for (let i = 0; i < user.feed.length; i++) {
+      const post = user.feed[i];
+      let score = this.getPostScore(analysisCollection[i]);
+      // Lo posteo en la history asincrónicamente
+      const historyModel = mongoose.model('history', historySchema);
+      const History = new historyModel({
+        score: score,
+        datetime: post.datetime,
+      })
+      historyCollection.push(History);
 
-    const analysisResults = await NLU.analyzeText(user.feed[0].text); // Realiza el análisis de sentimientos de último post
-
-    // Para ahorrar la call:
-    /*
-    const analysisResults = {
-      "usage": {
-        "text_units": 1,
-        "text_characters": 92,
-        "features": 4
-      },
-      "sentiment": {
-        "document": {
-          "score": -0.953238,
-          "label": "negative"
-        }
-      },
-      "language": "en",
-      "emotion": {
-        "document": {
-          "emotion": {
-            "sadness": 0.685109,
-            "joy": 0.143623,
-            "fear": 0.086354,
-            "disgust": 0.041431,
-            "anger": 0.081949
-          }
-        }
-      }
+      // logger.info(post.text, analysisCollection[i]);
     }
-    */
+    user.updateOne(
+      { $push: { 'history': { $each: historyCollection, $position: 0 } } }, { new: true }, 
+    ).exec().then((res) => {
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
+  async processFeed(user) {
+    // Realiza el análisis de sentimientos de último post
+    const analysisResults = await NLU.analyzeText(user.feed[0].text); 
 
-    console.log(JSON.stringify(analysisResults, null, 2));
+    // Extrae el puntaje del último post
+    let score = this._getPostScore(analysisResults); 
 
-    // Calcular el puntaje del último post
-    let score = this.getScore(analysisResults); 
-
-    // Lo posteo en la history asincrónicamente
+    // Genera la entrada del historial para el último post
     const historyModel = mongoose.model('history', historySchema);
     const History = new historyModel({
       score: score,
       datetime: user.feed[0].datetime,
-    })
+    });
+    
+    // Evalúo el puntaje teniendo en cuenta las últimas dos semanas
+    let overallResult = this._getUserEvaluation(score, user.history);
 
-    user.updateOne(
-      { $push: { 'history': { $each: [ History ], $position: 0 } } }, { new: true }, 
-    ).exec().then((res) => {
-
-    }).catch((err) => {
-      console.log(err);
-    })
-
-    // Obtengo los scores anteriores cumulativos
-    let pastWeekHistory = [];
-    let aggregateScore = score; // Empiezo con el valor que acabo de calcular
-    for (let item of user.history) {
-      if (this._beforePastWeek(item.datetime)) {
-        break; //Esto es posible porque están ordenados en forma descendiente. Apenas se pasa de la semana, corta.
-      }
-      // tomar diferencia de días y aplicar dayOfTheWeekImpact
-      let diffDias = cDates.diff(this.today, item.datetime, 'days', false);
-      aggregateScore += this._daysApartImpact(diffDias) * item.score;
-      pastWeekHistory.push(item);
-    }
-
-    let overallResult = this._inverseSigmoid(aggregateScore); // Resultado de aplicar el sigmoide a todo el cumulativo
-
+    // Si el puntaje supera el threshold para el usuario, envía una notificación a los voluntarios.
     if (overallResult > user.user_metadata.threshold) {
       Notification.send(overallResult, user);
     }
 
+    // Actualizo el historial y el ultimo puntaje del usuario en la base.
+    user.updateOne({ 
+      $push: { 'history': { $each: [ History ], $position: 0 } },
+      $set: { 'user_metadata.overallScore': overallResult },
+    }, { new: true }).exec()
+      .then((res) => {
+        console.log('update after processFeed');
+      }).catch((err) => {
+        console.log(err);
+      });
   }
-  getScore(analysis) {
+  _getPostScore(analysis) {
     return analysis.sentiment.document.score;
+  }
+  _getUserEvaluation(latestScore, history) {
+    let aggregateScore = latestScore;
+    let pastTwoWeeks = [];
+    for (let item of history) {
+      if (this._beforePastTwoWeeks(item.datetime)) {
+        break; //Esto es posible porque están ordenados en forma descendiente. Apenas se pasa las dos semanas, corta.
+      }
+      let diffDias = cDates.diff(this.today, item.datetime, 'days', false);
+      aggregateScore += this._daysApartImpact(diffDias) * item.score;
+      pastTwoWeeks.push(item);
+    }
+    return this._inverseSigmoid(aggregateScore); // Lo pongo entre 0 y 1;
   }
   _inverseSigmoid(x) {
     return (1 / (1 + Math.exp(x)));

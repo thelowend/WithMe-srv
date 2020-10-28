@@ -21,6 +21,7 @@ const userSchema = new Schema({
     profile_complete: Boolean,
     medical_license: { type: String },
     medical_institution: { type: String },
+    overallScore: { type: Number }
   },
   feed: { type: [feedSchema], select: false },
   history: { type: [historySchema], select: false },

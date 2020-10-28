@@ -12,6 +12,35 @@ router.route('/')
     res.send('<pre>' + JSON.stringify(received_updates, null, 2) + '</pre>');
   })
 
+/*
+const NLU = require('../services/nlu') // Servicio de NLU
+const posts = require('../evaluation/samples/posts');
+const Logger = require('../services/logger');
+const logger = new Logger();
+
+router.route('/processfiles')
+  .post((req, res) => {
+    for (let i = 0; i < posts.happy.length; i++) {
+      setTimeout(function () {
+        NLU.analyzeText(posts.happy[i]).then(function(analysisResults) {
+          const result = JSON.stringify(analysisResults)
+          logger.info('happy | ' + result);
+        });
+      }, 1500);
+    }
+    for (let i = 0; i < posts.sad.length; i++) {
+      setTimeout(function () {
+        NLU.analyzeText(posts.sad[i]).then(function(analysisResults) {
+          const result = JSON.stringify(analysisResults)
+          logger.info('sad | ' + result);
+        });
+      }, 1500);
+    }
+    console.log('processing posts');
+    res.send('<pre>thanks</pre>');
+  });
+*/
+
 router.route('/fb')
   .get((req, res) => {
     if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === token) {

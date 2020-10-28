@@ -42,6 +42,11 @@ class UserController extends Controller {
       })
       .catch(err => next(err))
   }
+  generateFeed(req, res, next) {
+    return hooksFacade.PutMultiple(req.params.id, parseInt(req.params.num), parseInt(req.params.sad))
+      .then(doc => res.status(200).json(doc))
+      .catch(err => next(err))
+  }
 }
 
 module.exports = new UserController(userFacade)

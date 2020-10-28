@@ -21,8 +21,9 @@
     "express-x-hub": "^1.0.4",
     "helmet": "^3.12.0",
     "ibm-watson": "^4.3.4",
-    "mongoose": "^5.7.5",
-    "morgan": "^1.9.0"
+    "mongoose": "^5.0.8",
+    "morgan": "^1.9.0",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "eslint": "^4.18.2",

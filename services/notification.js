@@ -1,8 +1,7 @@
 const config = require('../config')
 
 class Notification {
-    constructor() {
-    }
+    constructor() {}
     send(overallResult, userData) {
         var headers = {
             "Content-Type": "application/json; charset=utf-8",

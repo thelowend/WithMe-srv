@@ -12,6 +12,8 @@ node 6.3.x or later and mongodb
 
 ## developing
 
+node --inspect index.js
+
 run mongodd on a separated terminal instance:
 
 ```
@@ -33,6 +35,7 @@ _you'll likely be consuming mongodb as a service, so make sure you set the env v
 ```bash
 npm start
 ```
+
 
 
 
