@@ -1,5 +1,11 @@
 const mongoose = require('mongoose')
 
+const PROFILE = {
+  SLIGHT: { description: "Slight", threshold: 0.9, scoreLimit: 55 },  // None to slight
+  MILD: { description: "Mild", threshold: 0.6, scoreLimit: 60 },  // Mild
+  MODERATE: { description: "Moderate", threshold: 0.4, scoreLimit: 70 }, // Moderate
+  SEVERE: { description: "Severe", threshold: 0.2, scoreLimit: 100 },  // Severe
+}
 class Evaluation {
   constructor() { 
     // The conversion tables for T-Scores from the DSMV manual
@@ -13,20 +19,18 @@ class Evaluation {
     for (let i = 0; i < Object.keys(analysis).length; i++) {
       rawScore += analysis[i];
     }
-    return this.getThreshold(this.conversionTables[type][rawScore]);
+    return this.getMentalProfile(this.conversionTables[type][rawScore]);
   }
-  getThreshold(score) {
-    let threshold = 1;
-    if (score < 55.0) {
-      threshold = 0.9; // None to slight
-    } else if(score < 60) {
-      threshold = 0.6; // Mild
-    } else if(score < 70) {
-      threshold = 0.4; // Moderate
-    } else {
-      threshold = 0.2; // Severe
+  getMentalProfile(score) {
+    let mentalProfile = PROFILE.SEVERE;
+    if (score < PROFILE.SLIGHT.scoreLimit) {
+      mentalProfile = PROFILE.SLIGHT;
+    } else if(score < PROFILE.MILD.scoreLimit) {
+      mentalProfile = PROFILE.MILD;
+    } else if(score < PROFILE.MODERATE.scoreLimit) {
+      mentalProfile = PROFILE.MODERATE;
     }
-    return threshold;
+    return mentalProfile;
   }
 }
 

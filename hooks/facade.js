@@ -13,13 +13,14 @@ class HookFacade extends Facade {
     const userModel = mongoose.model('user', userSchema);
     const feedModel = mongoose.model('feed', feedSchema);
 
+    const date = new Date();
     const twoWeeksAgo = new Date();
-    twoWeeksAgo.setDate(new Date().getDate() - 30);
+    twoWeeksAgo.setDate(date.getDate() - 14);
 
     const sources = ['fb','tw','ig','tm'];
     const feedCollection = [];
     const analysisCollection = [];
-    const date = new Date();
+    
 
     // Generate posts from social media
     let days = 0;

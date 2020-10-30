@@ -24,4 +24,7 @@ router.route('/:id/social/generatefeed/:num/:sad')
 router.route('/:id/contact')
   .get((...args) => controller.getContactInfo(...args))
 
+router.route('/:userid/contact/:contactid')
+  .post((...args) => controller.addContact(...args))
+
 module.exports = router

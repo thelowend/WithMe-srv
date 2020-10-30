@@ -5,14 +5,16 @@ const NLU = require('../services/nlu') // Servicio de NLU
 const Notification = require('../services/notification')
 const Logger = require('../services/logger')
 
+const HelpRequestFacade = require('../model/helprequest/facade')
+
 const cDates = require('compare-dates')
 const logger = new Logger();
 
 class Score {
   constructor() {
     this.today = new Date();
-    this.fortnightAgo = new Date();
-    this.fortnightAgo.setDate(this.today.getDate() - 30);
+    this.fortnightAgo = new Date(this.today);
+    this.fortnightAgo.setDate(this.today.getDate() - 14);
   }
   _beforePastTwoWeeks(date) { // Compute the time 14 days ago to use in filtering the data
     return cDates.isBefore(date, this.fortnightAgo);
@@ -52,7 +54,7 @@ class Score {
       // logger.info(post.text, analysisCollection[i]);
     }
     user.updateOne(
-      { $push: { 'history': { $each: historyCollection, $position: 0 } } }, { new: true }, 
+      { $push: { 'history': { $each: historyCollection, $position: 0 } } }, { new: true },
     ).exec().then((res) => {
     }).catch((err) => {
       console.log(err);
@@ -60,10 +62,10 @@ class Score {
   }
   async processFeed(user) {
     // Realiza el análisis de sentimientos de último post
-    const analysisResults = await NLU.analyzeText(user.feed[0].text); 
+    const analysisResults = await NLU.analyzeText(user.feed[0].text);
 
     // Extrae el puntaje del último post
-    let score = this._getPostScore(analysisResults); 
+    let score = this._getPostScore(analysisResults);
 
     // Genera la entrada del historial para el último post
     const historyModel = mongoose.model('history', historySchema);
@@ -71,18 +73,31 @@ class Score {
       score: score,
       datetime: user.feed[0].datetime,
     });
-    
+
     // Evalúo el puntaje teniendo en cuenta las últimas dos semanas
     let overallResult = this._getUserEvaluation(score, user.history);
 
     // Si el puntaje supera el threshold para el usuario, envía una notificación a los voluntarios.
     if (overallResult > user.user_metadata.threshold) {
-      Notification.send(overallResult, user);
+      // Notification.send(overallResult, user);
+      // Publico el usuario en asked for help
+      debugger;
+      HelpRequestFacade.postHelpRequest({
+        user_id: user._id,
+        request_date: new Date(),
+        profile: user.user_metadata.mental_profile,
+        overallScore: 0.5,
+        feed: twoWeekFeed,
+      }).then((res) => {
+        console.log('help request posted');
+      }).catch((err) => {
+        console.log(err);
+      });
     }
 
     // Actualizo el historial y el ultimo puntaje del usuario en la base.
-    user.updateOne({ 
-      $push: { 'history': { $each: [ History ], $position: 0 } },
+    user.updateOne({
+      $push: { 'history': { $each: [History], $position: 0 } },
       $set: { 'user_metadata.overallScore': overallResult },
     }, { new: true }).exec()
       .then((res) => {

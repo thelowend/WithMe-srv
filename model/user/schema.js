@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const feedSchema = require('../feed/schema')
 const historySchema = require('../history/schema')
+const contactSchema = require('../contact/schema')
 
 const userSchema = new Schema({
   tenant: { type: String, select: false },
@@ -18,6 +19,7 @@ const userSchema = new Schema({
     role: { type: String, required: true },
     contact_number: { type: String, required: true },
     threshold: { type: Number },
+    mental_profile: { type: String },
     profile_complete: Boolean,
     medical_license: { type: String },
     medical_institution: { type: String },
@@ -31,6 +33,7 @@ const userSchema = new Schema({
   tw_sync: Boolean,
   ig_id: { type: String },
   ig_sync: Boolean,
+  contacts: { type: [contactSchema], required: false }
 })
 
 module.exports = userSchema

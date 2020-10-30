@@ -6,8 +6,11 @@ const Evaluation = require('../../services/evaluation')
 class UserController extends Controller {
   updateEvaluation(req, res, next) {
     if (req.body.evaluation && Object.keys(req.body.evaluation).length > 0) {
-      const result = Evaluation.evaluate(req.body.evaluation, req.params.category);
-      this.facade.updateOne({ _id: req.params.id }, { $set: { 'user_metadata.threshold': result } })
+      const mentalProfile = Evaluation.evaluate(req.body.evaluation, req.params.category);
+      this.facade.updateOne({ _id: req.params.id }, { $set: { 
+        'user_metadata.threshold': mentalProfile.threshold,
+        'user_metadata.mental_profile': mentalProfile.description,
+      } })
         .then((results) => {
           if (results.n < 1) { return res.sendStatus(404) }
           if (results.nModified < 1) { return res.sendStatus(304) }
@@ -20,7 +23,7 @@ class UserController extends Controller {
   }
   postStatus(req, res, next) {
     //req.params.id, req.params.target, req.body.post
-    switch(req.params.target) {
+    switch (req.params.target) {
       case 'Twitter':
         return hooksFacade.PutFromTW(req.body.post)
           .then(doc => res.status(201).json(doc))
@@ -36,6 +39,14 @@ class UserController extends Controller {
   }
   getContactInfo(req, res, next) {
     return this.facade.getContactInfo(req.params.id)
+      .then((doc) => {
+        if (!doc) { return res.sendStatus(404) }
+        return res.status(200).json(doc)
+      })
+      .catch(err => next(err))
+  }
+  addContact(req, res, next) {
+    return this.facade.addContact(req.params.userid, req.params.contactid)
       .then((doc) => {
         if (!doc) { return res.sendStatus(404) }
         return res.status(200).json(doc)

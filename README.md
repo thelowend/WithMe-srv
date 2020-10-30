@@ -4,6 +4,16 @@
 
 Backend Server for WithMeApp
 
+Controller:
+HTTP layer, in this instance you can manage express request, response and next. In lib/controller are the basic RESTful methods find, findOne, findById, create, update and remove. Because this class is extending from there, you got that solved. You can overwrite extended methods or create custom ones here.
+
+Facade:
+This layer works as a simplified interface of mongoose and as business model layer, in this instance you can manage your business logic. Here are some use case examples:
+
+Validate collection x before creating collection y
+Create collection x before creating collection y
+In lib/facade you have the basic support for RESTful methods. Because this class is extending from there, you got that solved. You can overwrite extended methods or create custom ones here. Also you can support more mongoose functionality like skip, sort etc.
+
 
 
 ## dependencies
