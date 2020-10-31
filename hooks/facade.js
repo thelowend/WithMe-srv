@@ -8,19 +8,21 @@ const Score = require('../services/score') // Servicio de scoring (nuestro algor
 const posts = require('../evaluation/samples/posts');
 const results = require('../evaluation/samples/results');
 
+const utils = require('../services/utils');
+
+const userModelTest = mongoose.model('user', userSchema);
+
 class HookFacade extends Facade {
   PutMultiple(id, num, sad) {
     const userModel = mongoose.model('user', userSchema);
     const feedModel = mongoose.model('feed', feedSchema);
 
     const date = new Date();
-    const twoWeeksAgo = new Date();
-    twoWeeksAgo.setDate(date.getDate() - 14);
+    const twoWeeksAgo = utils.twoWeeksAgo(date);
 
     const sources = ['fb','tw','ig','tm'];
     const feedCollection = [];
     const analysisCollection = [];
-    
 
     // Generate posts from social media
     let days = 0;
@@ -120,6 +122,45 @@ class HookFacade extends Facade {
     })) 
   }
   PutFromIG(body) {}
+  PutFromWithMeApp(body) {
+    const status = body.entry[0]; // El estado del usuario
+    const sDate = new Date(status.time * 1000); // Se multiplica por 1000 porque de fecha de FB viene dividido por 1000
+    const sText = status.changes[0].value.trim();
+
+    const userModel = mongoose.model('user', userSchema);
+    const feedModel = mongoose.model('feed', feedSchema);
+
+    const Feed = new feedModel({
+      source: 'wm',
+      datetime: sDate,
+      text: sText,
+      hour: sDate.getHours(),
+      day: sDate.getDay(),
+      month: sDate.getMonth(),
+      year: sDate.getFullYear(),
+    })
+
+    return userModel.findOneAndUpdate(
+      { _id: status.uid },
+      { $push: { 'feed': { $each: [ Feed ], $position: 0 } } }, { new: true }, 
+    ).select(['user_metadata', 'feed', 'history']).exec()
+    .then(user => new Promise(function(resolve, reject) {
+      Score.processFeed(user); // Proceso asincrónico del servidor
+      resolve(user);
+    })) 
+  }
+  clearFeed(id) {
+    return userModelTest.findOneAndUpdate(
+      { _id: id },
+      { feed : [] }, { new: true }
+    )
+  }
+  clearHistory(id) {
+    return userModelTest.findOneAndUpdate(
+      { _id: id },
+      { history : [] }, { new: true }
+    )
+  }
 }
 
 module.exports = new HookFacade('Hook', feedSchema)

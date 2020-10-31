@@ -1,5 +1,3 @@
-const mongoose = require('mongoose')
-
 const PROFILE = {
   SLIGHT: { description: "Slight", threshold: 0.9, scoreLimit: 55 },  // None to slight
   MILD: { description: "Mild", threshold: 0.6, scoreLimit: 60 },  // Mild

@@ -24,7 +24,16 @@ router.route('/:id/social/generatefeed/:num/:sad')
 router.route('/:id/contact')
   .get((...args) => controller.getContactInfo(...args))
 
-router.route('/:userid/contact/:contactid')
+router.route('/:id/contact/:userid')
   .post((...args) => controller.addContact(...args))
+
+router.route('/:id/messages')
+  .get((...args) => controller.getUserMessages(...args))
+
+router.route('/:id/history')
+  .delete((...args) => controller.clearHistory(...args))
+
+router.route('/:id/feed')
+  .delete((...args) => controller.clearFeed(...args))
 
 module.exports = router

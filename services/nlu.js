@@ -14,11 +14,15 @@ class NLU {
   analyzeText(input) {
     return this.nluService.analyze({
       'text': input,
+      'language': 'en',
       'features': {
         'sentiment': {},
         'emotion': {},
       }
     })
+  }
+  getPostScore(analysis) {
+    return analysis.sentiment.document.score;
   }
 }
 
