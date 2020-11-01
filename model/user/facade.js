@@ -9,9 +9,9 @@ class UserFacade extends Facade {
       .findById(...args, 'user_metadata feed')
       .exec()
   }
-  getContactInfo(...args) {
+  getMetaData(...args) {
     return this.Model
-      .findById(...args, 'email user_metadata feed history')
+      .findById(...args, 'user_metadata')
       .exec()
   }
   getUserMessages(...args) {
@@ -24,20 +24,24 @@ class UserFacade extends Facade {
         return Promise.reject(err)
       })
   }
-  addContact(helperid, userid) {
+  addContact(helperid, userid, username) {
     // Cuando el voluntario asiste a un usuario, ésta se añade a sus contactos y el voluntario es añadido a los contactos del usuario.
+    debugger;
     const contactModel = mongoose.model('contact', contactSchema);
     const Contact = new contactModel({
       helper_id: helperid,
-      name: 'testname',
+      name: username,
       contact_date: new Date(),
     });
 
-    this.Model.findById(helperid).then( helper => {
+    // Hacer una para el helper también.
 
-    }).catch(err => {
+    this.Model.findById(helperid)
+      .then( helper => {
 
-    });
+      }).catch(err => {
+
+      });
 
     return this.Model.findOneAndUpdate(
       { _id: userid },

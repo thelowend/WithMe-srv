@@ -139,15 +139,22 @@ class Score {
   }
   _processScore(score) {
     /* 
-     * El análisis de texto evalúa el sentimiento de un texto valuándolo entre (-1, 1).
-     * 1 - Aplico una transformación al valor para que quede definido en el itervalo [0, 1] utilizando la función f: 0.5 + x/2 
-     * 2 - Calculo el sigmoide inverso del mismo valor, para obtener una curva que atenúa el impacto de los valores extremos.
-     * 3 - Promedio ambos valores para obtener una evaluación aproximada.
-     * En el futuro podría considerarse aplicar diferentes curvas de atenuación de acuerdo al perfil del usuario [moderado, grave, etc.]
+     * El análisis de sentimientos asigna un puntaje al texto dentro del intervalo (-1, 1), donde los valores por debajo del 0 representan sentimientos negativos y los que están por encima del mismo positivos.
+     * Para relacionar dicha calificación con el sistema de umbral de alerta, creamos una función de transformación de ajuste basada en el método exponencial.
+     * La misma se creó utilizando la herramienta https://www.mycurvefit.com/ y con los siguientes pares ordenados, los cuales representan el nivel equivalente de negatividad total necesaria para disparar la alerta.
+     *
+     *  Score (X)          Threshold (Y)
+     * ----------          -------------
+     * -1                  1          
+     * -0.95               0.9        
+     * -0.8                0.6        
+     * -0.5                0.2        
+     *  1                  0  
+     *                                         
      */
-    const intervalo = 0.5 + score / 2;
-    const sigmoideInverso = 1 / (1 + Math.exp(-score));
-    return (intervalo + sigmoideInverso) / 2;
+    // 
+    
+    return (-0.01438012 + 0.05945283 * Math.exp(-2.858466 * score));
   }
 }
 

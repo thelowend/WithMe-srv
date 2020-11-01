@@ -47,8 +47,8 @@ class UserController extends Controller {
     }
 
   }
-  getContactInfo(req, res, next) {
-    return this.facade.getContactInfo(req.params.id)
+  getMetaData(req, res, next) {
+    return this.facade.getMetaData(req.params.id)
       .then((doc) => {
         if (!doc) { return res.sendStatus(404) }
         return res.status(200).json(doc)
@@ -56,7 +56,7 @@ class UserController extends Controller {
       .catch(err => next(err))
   }
   addContact(req, res, next) {
-    return this.facade.addContact(req.params.id, req.params.userid)
+    return this.facade.addContact(req.params.id, req.body.userid, req.body.username)
       .then((doc) => {
         if (!doc) { return res.sendStatus(404) }
         return res.status(200).json(doc)

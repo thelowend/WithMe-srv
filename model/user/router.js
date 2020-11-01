@@ -19,13 +19,14 @@ router.route('/:id/social/:target')
   .post((...args) => controller.postStatus(...args))
 
 router.route('/:id/social/generatefeed/:num/:sad')
-  .put((...args) => controller.generateFeed(...args))
+  .put((...args) => controller.generateFeed(...args)) // For testing purposes
+
+router.route('/:id/metadata')
+  .get((...args) => controller.getMetaData(...args))
 
 router.route('/:id/contact')
   .get((...args) => controller.getContactInfo(...args))
-
-router.route('/:id/contact/:userid')
-  .post((...args) => controller.addContact(...args))
+  .post((...args) => controller.addContact(...args)) // Helper adds a contact
 
 router.route('/:id/messages')
   .get((...args) => controller.getUserMessages(...args))
