@@ -3,6 +3,7 @@ const helpRequestSchema = require('./schema');
 const userFacade = require('../user/facade');
 const utils = require('../../services/utils');
 const error = require('../../services/error');
+const Notification = require('../services/notification');
 
 class HelpRequestFacade extends Facade {
   postHelpRequest(userId) {
@@ -23,7 +24,7 @@ class HelpRequestFacade extends Facade {
           }, { upsert: true })
             .then(result => {
               console.log('Help Request Posted Properly'); // null
-              // TODO: VER TEMA UNHANDLED REJECTION
+              Notification.send(overallResult, user); // Envío la notificación de la existencia del mismo a los voluntarios
             }).catch(err => error.throw(err));
 
         }).catch(err => error.throw(err));
