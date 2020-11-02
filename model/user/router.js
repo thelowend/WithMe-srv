@@ -26,7 +26,11 @@ router.route('/:id/metadata')
 
 router.route('/:id/contact')
   .get((...args) => controller.getContactInfo(...args))
+  .delete((...args) => controller.deleteContacts(...args))
+
+router.route('/:id/contact/:contactid')
   .post((...args) => controller.addContact(...args)) // Helper adds a contact
+  .delete((...args) => controller.removeContact(...args)) // Helper removes contact
 
 router.route('/:id/messages')
   .get((...args) => controller.getUserMessages(...args))
@@ -35,6 +39,7 @@ router.route('/:id/history')
   .delete((...args) => controller.clearHistory(...args))
 
 router.route('/:id/feed')
+  .get((...args) => controller.getUserWithFeed(...args))
   .delete((...args) => controller.clearFeed(...args))
 
 module.exports = router

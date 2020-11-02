@@ -53,8 +53,7 @@ class Score {
       // Lo posteo en la history asincrónicamente
       user.updateOne(
         { $push: { 'history': { $each: historyCollection, $position: 0 } } }, { new: true },
-      ).exec()
-      then((res) => {
+      ).exec().then((res) => {
         console.log(res);
       }).catch(err => error.throw(err));
     } catch (err) {

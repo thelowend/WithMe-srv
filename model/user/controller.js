@@ -56,11 +56,21 @@ class UserController extends Controller {
       .catch(err => next(err))
   }
   addContact(req, res, next) {
-    return this.facade.addContact(req.params.id, req.body.userid, req.body.username)
+    return this.facade.addContact(req.params.id, req.body.helpername, req.params.contactid, req.body.username)
       .then((doc) => {
         if (!doc) { return res.sendStatus(404) }
         return res.status(200).json(doc)
       })
+      .catch(err => next(err))
+  }
+  removeContact(req, res, next) {
+    return this.facade.removeContact(req.params.id, req.params.contactid)
+      .then(doc => res.status(200).json(doc))
+      .catch(err => next(err))
+  }
+  deleteContacts(req, res, next) {
+    return this.facade.deleteContacts(req.params.id)
+      .then(doc => res.status(200).json(doc))
       .catch(err => next(err))
   }
   getUserMessages(req, res, next) {
@@ -68,7 +78,11 @@ class UserController extends Controller {
       .then(doc => res.status(200).json(doc))
       .catch(err => next(err))
   }
-
+  getUserWithFeed(req, res, next) {
+    return this.facade.getUserWithFeed(req.params.id)
+    .then(doc => res.status(200).json(doc))
+    .catch(err => next(err))
+  }
   generateFeed(req, res, next) {
     return hooksFacade.PutMultiple(req.params.id, parseInt(req.params.num), parseInt(req.params.sad))
       .then(doc => res.status(200).json(doc))
