@@ -40,6 +40,8 @@ app.use(function(req, res, next) {
   }
 });
 
+app.use(express.static(__dirname + '/backoffice'));
+
 app.use(xhub({ algorithm: 'sha1', secret: process.env.APP_SECRET })); // FB
 
 app.use(bodyParser.urlencoded({ extended: true }))

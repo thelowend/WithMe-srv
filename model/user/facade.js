@@ -5,6 +5,27 @@ const userSchema = require('./schema')
 const error = require('../../services/error');
 
 class UserFacade extends Facade {
+  findHelpers() {
+    return this.Model
+      .find({
+        'user_metadata.role': 'helper',
+        'user_metadata.profile_complete': true
+      }).exec()
+  }
+  approveHelper(helperid) {
+    return this.Model.findOneAndUpdate({ '_id': helperid }, {
+      $set: {
+        'user_metadata.approved': true
+      }
+    }, { new: true });
+  }
+  disapproveHelper(helperid) {
+    return this.Model.findOneAndUpdate({ '_id': helperid }, {
+      $set: {
+        'user_metadata.approved': false
+      }
+    }, { new: true });
+  }
   getUserWithFeed(...args) {
     return this.Model
       .findById(...args, 'user_metadata feed')
@@ -85,7 +106,7 @@ class UserFacade extends Facade {
         if (err) {
           error.throw(err);
         } else {
-          this.Model.updateOne({ '_id': userid}, {
+          this.Model.updateOne({ '_id': userid }, {
             $pull: {
               'contacts': { 'user_id': id }
             }

@@ -6,6 +6,13 @@ router.route('/')
   .get((...args) => controller.find(...args))
   .post((...args) => controller.create(...args))
 
+router.route('/helper')
+  .get((...args) => controller.findHelpers(...args))
+  
+router.route('/:id/approve')
+  .put((...args) => controller.approveHelper(...args))
+  .delete((...args) => controller.disapproveHelper(...args))
+
 router.route('/:id')
   .put((...args) => controller.updateOne(...args))
   .patch((...args) => controller.update(...args))

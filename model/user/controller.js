@@ -4,6 +4,30 @@ const hooksFacade = require('../../hooks/facade')
 const Evaluation = require('../../services/evaluation')
 
 class UserController extends Controller {
+  findHelpers(req, res, next) {
+    return this.facade.findHelpers()
+    .then((doc) => {
+      if (!doc) { return res.sendStatus(404) }
+      return res.status(200).json(doc)
+    })
+    .catch(err => next(err))
+  }
+  approveHelper(req, res, next) {
+    return this.facade.approveHelper(req.params.id)
+    .then((doc) => {
+      if (!doc) { return res.sendStatus(404) }
+      return res.status(200).json(doc)
+    })
+    .catch(err => next(err))
+  }
+  disapproveHelper(req, res, next) {
+    return this.facade.disapproveHelper(req.params.id)
+    .then((doc) => {
+      if (!doc) { return res.sendStatus(404) }
+      return res.status(200).json(doc)
+    })
+    .catch(err => next(err))
+  }
   updateEvaluation(req, res, next) {
     if (req.body.evaluation && Object.keys(req.body.evaluation).length > 0) {
       const mentalProfile = Evaluation.evaluate(req.body.evaluation, req.params.category);

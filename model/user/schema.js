@@ -19,7 +19,7 @@ const userSchema = new Schema({
     name: { type: String, required: false },
     role: { type: String, required: true },
     contact_number: { type: String, required: true },
-    approved: { type: Boolean },
+    approved: { type: Boolean, default: false },
     threshold: { type: Number },
     mental_profile: { type: String },
     profile_complete: { type: Boolean },

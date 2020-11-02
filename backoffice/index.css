@@ -1,0 +1,30 @@
+.bg-primary {
+    background-color: #7CC1F2;
+}
+.bg-primary-light {
+    background-color: #A9D8F9;
+}
+.bg-primary-lighter {
+    background-color: #E1F2FE;
+}
+.bg-primary-dark {
+    background-color: #56ABE7;
+}
+.bg-primary-darker {
+    background-color: #3491D4;
+}
+.bg-complement {
+    background-color: #FFC57A;
+}
+.bg-complement-light {
+    background-color: #FFD9A7;
+}
+.bg-complement-lighter {
+    background-color: #FFF2E0;
+}
+.bg-complement-dark {
+    background-color: #FFB555;
+}
+.bg-complement-darker {
+    background-color: #FFA632;
+}
