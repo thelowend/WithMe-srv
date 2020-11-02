@@ -87,7 +87,7 @@ class Score {
           overallScore: overallResult,
           feed: lastTwoWeeksFeed,
         }).then((res) => {
-          // Notification.send(overallResult, user); // Envío la notificación de la existencia del mismo a los voluntarios
+          Notification.send(overallResult, user); // Envío la notificación de la existencia del mismo a los voluntarios
           console.log('Help request posted');
         }).catch(err => error.throw(err));
       }

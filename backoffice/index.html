@@ -66,26 +66,18 @@
     (async ($) => {
       const approveHelper = (id, val) => fetch(`${baseURL}/user/${id}/approve`, {
         method: (val ? 'put' : 'delete'),
-        headers: requestHeaders//,body: JSON.stringify({})
+        headers: requestHeaders
       });
 
       const getHelpers = () => fetch(`${baseURL}/user/helper`, {
         method: 'get',
-        headers: requestHeaders//,body: JSON.stringify({})
+        headers: requestHeaders
       });
 
       const approveRequest = (id, val) => {
         approveHelper(id, val).then(user => {
           window.location.reload();
         }).catch(err => console.log(err));
-      }
-
-      const getSignal = (val) => {
-        if (val) {
-
-        } else {
-
-        }
       }
 
       const createTableRows = (users) => {
@@ -98,11 +90,11 @@
           const button = document.createElement('button');
           tr.innerHTML = `
             <td><span class="badge badge-${data.approved ? 'success' : 'danger'}">${data.approved}</td>
-            <td>${data.name}</td>
-            <td>${data.age}</td>
-            <td><a href="tel:${data.contact_number}">${data.contact_number}</a></td>
-            <td>${data.medical_license}</td>
-            <td>${data.medical_institution}</td>
+            <td>${data.name || '-'}</td>
+            <td>${data.age || '-'}</td>
+            <td><a href="tel:${data.contact_number}">${data.contact_number || '-'}</a></td>
+            <td>${data.medical_license || '-'}</td>
+            <td>${data.medical_institution || '-'}</td>
           `;
           button.addEventListener('click', () => approveRequest(user._id, !data.approved));
           button.innerText = (data.approved ? 'Disapprove' : 'Approve');
