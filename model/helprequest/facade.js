@@ -23,6 +23,7 @@ class HelpRequestFacade extends Facade {
           }, { upsert: true })
             .then(result => {
               console.log('Help Request Posted Properly'); // null
+              // TODO: VER TEMA UNHANDLED REJECTION
             }).catch(err => error.throw(err));
 
         }).catch(err => error.throw(err));

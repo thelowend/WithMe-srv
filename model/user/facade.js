@@ -54,7 +54,7 @@ class UserFacade extends Facade {
         contact_date: date
       });
 
-      return this.Model.updateOne({ '_id': helperid, 'contacts.user_id': { '$ne': userid } }, {
+      return this.Model.findOneAndUpdate({ '_id': helperid, 'contacts.user_id': { '$ne': userid } }, {
         $push: {
           'contacts': {
             $each: [userContact], $position: 0
@@ -81,14 +81,21 @@ class UserFacade extends Facade {
         $pull: {
           'contacts': { 'user_id': userid }
         }
-      }).then(() => {
-        // Remove it from the user standpoint as well (TODO: Hacerlas en batch para poder hacer un rollback completo.)
-        this.Model.findByIdAndUpdate(userid, {
-          $pull: {
-            'contacts': { 'user_id': id }
-          }
-        })
-      }).catch(err => error.throw(err))
+      }, { new: true }, err => {
+        if (err) {
+          error.throw(err);
+        } else {
+          this.Model.updateOne({ '_id': userid}, {
+            $pull: {
+              'contacts': { 'user_id': id }
+            }
+          }, err => {
+            if (err) {
+              error.throw(err);
+            }
+          })
+        }
+      })
     } catch (err) {
       error.logError(0, err);
     }

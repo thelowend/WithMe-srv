@@ -17,6 +17,7 @@ const app = express()
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
+mongoose.set('useUnifiedTopology', true);
 
 mongoose.Promise = bluebird
 mongoose.connect(config.mongo.url, {dbName: 'withmedb'})
