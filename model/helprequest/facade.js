@@ -24,7 +24,7 @@ class HelpRequestFacade extends Facade {
           }, { upsert: true })
             .then(result => {
               console.log('Help Request Posted Properly'); // null
-              Notification.send(overallResult, user); // Envío la notificación de la existencia del mismo a los voluntarios
+              Notification.send(user.user_metadata.overallScore, user); // Envío la notificación de la existencia del mismo a los voluntarios
             }).catch(err => error.throw(err));
 
         }).catch(err => error.throw(err));
