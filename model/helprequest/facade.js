@@ -3,7 +3,7 @@ const helpRequestSchema = require('./schema');
 const userFacade = require('../user/facade');
 const utils = require('../../services/utils');
 const error = require('../../services/error');
-const Notification = require('../services/notification');
+const Notification = require('../../services/notification');
 
 class HelpRequestFacade extends Facade {
   postHelpRequest(userId) {
