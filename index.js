@@ -24,13 +24,29 @@ mongoose.connect(config.mongo.url, {dbName: 'withmedb'})
 
 app.use(helmet())
 
+// Autenticación de los requests al backend
+app.use(function(req, res, next) {
+  var auth;
+  // check whether an autorization header was send    
+  if (req.headers.authorization) {
+    auth = Buffer.from(req.headers.authorization.substring(6), 'base64').toString().split(':');
+  }
+  if (!auth || auth[0] !== process.env.BACKEND_USERNAME || auth[1] !== process.env.BACKEND_PASSWORD) {
+      res.statusCode = 401;
+      res.setHeader('WWW-Authenticate', 'Basic realm="WithMeSrv"');
+      res.end('Unauthorized');
+  } else {
+      next();
+  }
+});
+
 app.use(xhub({ algorithm: 'sha1', secret: process.env.APP_SECRET })); // FB
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(morgan('tiny'))
 
-/*
+/* Para hacer whitelist de URLs cuando salga la versión "comercial".
 const whitelist = ['http://example1.com', 'http://example2.com']
 var corsOptions = {
   origin: function (origin, callback) {
@@ -50,7 +66,7 @@ app.use(cors())
 app.use('/', routes)
 
 app.listen(config.server.port, () => {
-  console.log(`Magic happens on port ${config.server.port}`)
+  console.log(`Servidor de With Me App iniciado en el puerto ${config.server.port}`)
 })
 
 module.exports = app
