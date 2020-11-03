@@ -81,16 +81,17 @@ class Score {
       // Si el puntaje supera el threshold para el usuario, envía una notificación a los voluntarios.
       if (overallResult > user.user_metadata.threshold) {
         const lastTwoWeeksFeed = user.feed.filter(post => utils.happenedAfter(post.datetime, this.fortnightAgo));
+        const userId = user._id.toString();
         // Guardo el help request del usuario en el documento de la base de datos
         HelpRequestFacade.postHelpRequest({
-          user_id: user._id.toString(),
+          user_id: userId,
           request_date: this.today,
           profile: user.user_metadata.mental_profile,
           overallScore: overallResult,
           feed: lastTwoWeeksFeed,
         }).then((res) => {
           user['feed'] = [];
-          Notification.send(user, lastTwoWeeksFeed); // Envío la notificación de la existencia del mismo a los voluntarios
+          Notification.send(userId, lastTwoWeeksFeed); // Envío la notificación de la existencia del mismo a los voluntarios
           console.log('Help request posted');
         }).catch(err => error.throw(err));
       }

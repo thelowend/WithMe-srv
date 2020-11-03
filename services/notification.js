@@ -2,7 +2,7 @@ const config = require('../config')
 
 class Notification {
     constructor() {}
-    send(user, lastTwoWeeksFeed) {
+    send(userId, lastTwoWeeksFeed) {
         var headers = {
             "Content-Type": "application/json; charset=utf-8",
             "Authorization": `Basic ${config.notifications.apiKey}`
@@ -33,7 +33,7 @@ class Notification {
             app_id: `${config.notifications.appId}`,
             contents: {"en": "Someone needs help"},
             data: {
-                "user": JSON.stringify(user),
+                "user_id": userId,
                 "feed": JSON.stringify(lastTwoWeeksFeed),
             },
             included_segments: ["Helpers"] // ["All"], ["Users"], ["Active Users"], etc.

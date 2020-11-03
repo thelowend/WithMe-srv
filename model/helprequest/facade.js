@@ -25,7 +25,7 @@ class HelpRequestFacade extends Facade {
             .then(result => {
               console.log('Help Request Posted Properly'); // null
               user['feed'] = [];
-              Notification.send(user, lastTwoWeeksFeed); // Envío la notificación de la existencia del mismo a los voluntarios
+              Notification.send(userId, lastTwoWeeksFeed); // Envío la notificación de la existencia del mismo a los voluntarios
             }).catch(err => error.throw(err));
 
         }).catch(err => error.throw(err));
