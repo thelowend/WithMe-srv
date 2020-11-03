@@ -8,7 +8,7 @@ const HelpRequestFacade = require('../model/helprequest/facade')
 
 const utils = require('./utils')
 const error = require('./error');
-const logger = new Logger();
+// const logger = new Logger();
 
 class Score {
   constructor() {
@@ -32,6 +32,8 @@ class Score {
       c is the abscissa of the mid-height point which ordinate is (a+b)/2. 
       When a is lower than d, the curve decreases from d to a, and when a is greater than d, the curve increases from a to d.
     */
+
+    // Al final no se utilizó. Lo que caracteriza el trastorno de estado de ánimo es la mismo impacto de intensidad de emociones a lo largo de un tiempo consistente.
     return Math.min(0.1143415 + (1.004078 - 0.1143415) / (1 + Math.pow((daysApart / 3.067045), 3.307601)), 1);
   }
   async processAllFeed(user, analysisCollection) {
@@ -87,7 +89,8 @@ class Score {
           overallScore: overallResult,
           feed: lastTwoWeeksFeed,
         }).then((res) => {
-          Notification.send(overallResult, user); // Envío la notificación de la existencia del mismo a los voluntarios
+          user['feed'] = [];
+          Notification.send(user, lastTwoWeeksFeed); // Envío la notificación de la existencia del mismo a los voluntarios
           console.log('Help request posted');
         }).catch(err => error.throw(err));
       }
