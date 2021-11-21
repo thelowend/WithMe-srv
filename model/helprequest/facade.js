@@ -12,14 +12,13 @@ class HelpRequestFacade extends Facade {
         .then(user => {
           const date = new Date();
           const lastTwoWeeksFeed = user.feed.filter(post => utils.happenedAfter(post.datetime, utils.twoWeeksAgo(date)));
-
           // Si ya existe un pedido de ese usuario, lo actualiza. No crea entradas duplicadas.
           this.Model.findOneAndUpdate({ 'user_id': userId }, {
             user_id: userId,
             name: user.user_metadata.name,
             request_date: date,
             profile: user.user_metadata.mental_profile,
-            overallScore: user.user_metadata.overallScore,
+            overallScore: user.user_metadata.overallScore || 0,
             feed: lastTwoWeeksFeed,
           }, { upsert: true })
             .then(result => {
