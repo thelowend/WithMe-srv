@@ -83,13 +83,7 @@ class Score {
         const lastTwoWeeksFeed = user.feed.filter(post => utils.happenedAfter(post.datetime, this.fortnightAgo));
         const userId = user._id.toString();
         // Guardo el help request del usuario en el documento de la base de datos
-        HelpRequestFacade.postHelpRequest(userId/*{
-          user_id: userId,
-          request_date: this.today,
-          profile: user.user_metadata.mental_profile,
-          overallScore: overallResult,
-          feed: lastTwoWeeksFeed,
-        }*/).then((res) => {
+        HelpRequestFacade.postHelpRequest(userId).then((res) => {
           user['feed'] = [];
           // Need to truncate feed to < 2048 bytes
           Notification.send(userId, lastTwoWeeksFeed); // Envío la notificación de la existencia del mismo a los voluntarios
@@ -159,7 +153,7 @@ class Score {
      */
     // 
     
-    return (-0.01438012 + 0.05945283 * Math.exp(-2.858466 * score));
+    return Math.min((-0.01438012 + 0.05945283 * Math.exp(-2.858466 * score), 1));
   }
 }
 
